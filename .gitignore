@@ -1,0 +1,5 @@
+# OSX system file
+.DS_Store
+Desktop.ini
+build/
+DerivedData

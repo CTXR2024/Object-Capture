@@ -9,16 +9,27 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        GeometryReader { geometry in
+            HStack(alignment: .top, content: {
+                VStack {
+                    Text("Files")
+                        .font(.system(size: 14, design: .rounded))
+                }
+                .frame(width: geometry.size.width * 1 / 5)
+                .frame(height: geometry.size.height)
+                .background(Color("leftPanelBackground"))
+                ZStack {
+                    
+                }
+                .frame(width: geometry.size.width * 4 / 5)
+                .frame(height: geometry.size.height)
+                .background(Color(.white))
+            })
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
 }
+

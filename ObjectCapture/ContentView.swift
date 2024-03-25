@@ -10,24 +10,41 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         GeometryReader { geometry in
-            HStack(alignment: .top, content: {
-                VStack {
+            
+            let leftPanelWidth = geometry.size.width * 1 / 4
+            
+            HStack(alignment: .top, spacing: 0) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Files")
-                        .font(.system(size: 14, design: .rounded))
+                        .font(.headline)
+                        .frame(alignment: .leading)
+                    FolderSelectionView()
+                    Divider()
+                        .foregroundColor(.white)
+                    Spacer().frame(height: 2)
+                    Button(action: {}) {
+                        Text("Preview")
+                            .font(.caption2)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
-                .frame(width: geometry.size.width * 1 / 5)
-                .frame(height: geometry.size.height)
+                .frame(width: leftPanelWidth, height: geometry.size.height, alignment:.topLeading)
+                .padding(.top, 20.0)
+                .padding(.horizontal, 10.0)
                 .background(Color("leftPanelBackground"))
                 ZStack {
                     
                 }
-                .frame(width: geometry.size.width * 4 / 5)
+                .frame(width: leftPanelWidth * 3)
                 .frame(height: geometry.size.height)
                 .background(Color(.white))
-            })
+            }
         }
     }
 }
+
+
+
 
 #Preview {
     ContentView()

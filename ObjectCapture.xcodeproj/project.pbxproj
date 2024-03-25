@@ -14,6 +14,8 @@
 		D74ED2072BAD622D0081F7DA /* ObjectCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2062BAD622D0081F7DA /* ObjectCaptureTests.swift */; };
 		D74ED2112BAD622D0081F7DA /* ObjectCaptureUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2102BAD622D0081F7DA /* ObjectCaptureUITests.swift */; };
 		D74ED2132BAD622D0081F7DA /* ObjectCaptureUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2122BAD622D0081F7DA /* ObjectCaptureUITestsLaunchTests.swift */; };
+		D74ED2222BB14D9D0081F7DA /* FolderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2212BB14D9D0081F7DA /* FolderButton.swift */; };
+		D74ED2242BB159EC0081F7DA /* FolderSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2232BB159EC0081F7DA /* FolderSelectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +47,8 @@
 		D74ED20C2BAD622D0081F7DA /* ObjectCaptureUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectCaptureUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D74ED2102BAD622D0081F7DA /* ObjectCaptureUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectCaptureUITests.swift; sourceTree = "<group>"; };
 		D74ED2122BAD622D0081F7DA /* ObjectCaptureUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectCaptureUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		D74ED2212BB14D9D0081F7DA /* FolderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderButton.swift; sourceTree = "<group>"; };
+		D74ED2232BB159EC0081F7DA /* FolderSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSelectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +104,8 @@
 				D74ED1F82BAD622C0081F7DA /* Assets.xcassets */,
 				D74ED1FD2BAD622C0081F7DA /* ObjectCapture.entitlements */,
 				D74ED1FA2BAD622C0081F7DA /* Preview Content */,
+				D74ED2212BB14D9D0081F7DA /* FolderButton.swift */,
+				D74ED2232BB159EC0081F7DA /* FolderSelectionView.swift */,
 			);
 			path = ObjectCapture;
 			sourceTree = "<group>";
@@ -260,7 +266,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D74ED1F72BAD622B0081F7DA /* ContentView.swift in Sources */,
+				D74ED2242BB159EC0081F7DA /* FolderSelectionView.swift in Sources */,
 				D74ED1F52BAD622B0081F7DA /* ObjectCaptureApp.swift in Sources */,
+				D74ED2222BB14D9D0081F7DA /* FolderButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

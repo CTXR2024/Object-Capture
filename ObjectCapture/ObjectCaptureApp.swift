@@ -11,7 +11,7 @@ import SwiftUI
 struct ObjectCaptureApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            QuickLookPreview()
         }
     }
 }

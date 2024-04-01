@@ -14,6 +14,9 @@
 		D74ED2072BAD622D0081F7DA /* ObjectCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2062BAD622D0081F7DA /* ObjectCaptureTests.swift */; };
 		D74ED2112BAD622D0081F7DA /* ObjectCaptureUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2102BAD622D0081F7DA /* ObjectCaptureUITests.swift */; };
 		D74ED2132BAD622D0081F7DA /* ObjectCaptureUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74ED2122BAD622D0081F7DA /* ObjectCaptureUITestsLaunchTests.swift */; };
+		F70A77E12BB6950E0003C243 /* QuickLookPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */; };
+		F70A77E42BB6984B0003C243 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F70A77E32BB6984B0003C243 /* Quartz.framework */; };
+		F70A77E62BB699950003C243 /* PegasusTrail.usdz in Resources */ = {isa = PBXBuildFile; fileRef = F70A77E52BB699950003C243 /* PegasusTrail.usdz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +48,9 @@
 		D74ED20C2BAD622D0081F7DA /* ObjectCaptureUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectCaptureUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D74ED2102BAD622D0081F7DA /* ObjectCaptureUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectCaptureUITests.swift; sourceTree = "<group>"; };
 		D74ED2122BAD622D0081F7DA /* ObjectCaptureUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectCaptureUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickLookPreview.swift; sourceTree = "<group>"; };
+		F70A77E32BB6984B0003C243 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		F70A77E52BB699950003C243 /* PegasusTrail.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = PegasusTrail.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F70A77E42BB6984B0003C243 /* Quartz.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,10 +82,12 @@
 		D74ED1E82BAD622B0081F7DA = {
 			isa = PBXGroup;
 			children = (
+				F70A77E52BB699950003C243 /* PegasusTrail.usdz */,
 				D74ED1F32BAD622B0081F7DA /* ObjectCapture */,
 				D74ED2052BAD622D0081F7DA /* ObjectCaptureTests */,
 				D74ED20F2BAD622D0081F7DA /* ObjectCaptureUITests */,
 				D74ED1F22BAD622B0081F7DA /* Products */,
+				F70A77E22BB6984B0003C243 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -95,6 +104,7 @@
 		D74ED1F32BAD622B0081F7DA /* ObjectCapture */ = {
 			isa = PBXGroup;
 			children = (
+				F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */,
 				D74ED1F42BAD622B0081F7DA /* ObjectCaptureApp.swift */,
 				D74ED1F62BAD622B0081F7DA /* ContentView.swift */,
 				D74ED1F82BAD622C0081F7DA /* Assets.xcassets */,
@@ -127,6 +137,14 @@
 				D74ED2122BAD622D0081F7DA /* ObjectCaptureUITestsLaunchTests.swift */,
 			);
 			path = ObjectCaptureUITests;
+			sourceTree = "<group>";
+		};
+		F70A77E22BB6984B0003C243 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F70A77E32BB6984B0003C243 /* Quartz.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -234,6 +252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D74ED1FC2BAD622C0081F7DA /* Preview Assets.xcassets in Resources */,
+				F70A77E62BB699950003C243 /* PegasusTrail.usdz in Resources */,
 				D74ED1F92BAD622C0081F7DA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D74ED1F72BAD622B0081F7DA /* ContentView.swift in Sources */,
+				F70A77E12BB6950E0003C243 /* QuickLookPreview.swift in Sources */,
 				D74ED1F52BAD622B0081F7DA /* ObjectCaptureApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

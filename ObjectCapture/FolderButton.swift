@@ -9,9 +9,9 @@ import SwiftUI
 
 struct FolderButton: View {
     
-    var isSelected: Bool
+    var isSelected: Bool = false
     var label: String
-    var action: ()-> Void
+    var action: () -> Void
     
     init(isSelected: Bool, label: String, action: @escaping () -> Void) {
         self.isSelected = isSelected
@@ -20,7 +20,9 @@ struct FolderButton: View {
     }
     
     var body: some View {
-        Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
+        Button(action: {
+            action()
+        }, label: {
             VStack(spacing: 2) {
                 Image(systemName: isSelected ? "folder" : "square.and.arrow.down")
                     .imageScale(.large)

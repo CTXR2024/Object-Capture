@@ -14,9 +14,7 @@ struct ContentView: View {
         GeometryReader { geo in
             HStack(spacing: 0) {
                 Sidebar()
-                VStack {
-                    Color.white
-                }
+                QuickLookPreview()
             }.frame(width: geo.size.width, height: geo.size.height)
         }
     }

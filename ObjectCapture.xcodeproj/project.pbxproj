@@ -20,6 +20,9 @@
 		D770792C2BC3F9A100568AB1 /* Quality.swift in Sources */ = {isa = PBXBuildFile; fileRef = D770792B2BC3F9A100568AB1 /* Quality.swift */; };
 		D770792E2BC3FC1F00568AB1 /* QualityPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D770792D2BC3FC1F00568AB1 /* QualityPicker.swift */; };
 		D77079322BC4E77F00568AB1 /* ColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77079312BC4E77F00568AB1 /* ColorExt.swift */; };
+		F70A77E12BB6950E0003C243 /* QuickLookPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */; };
+		F70A77E42BB6984B0003C243 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F70A77E32BB6984B0003C243 /* Quartz.framework */; };
+		F70A77E62BB699950003C243 /* PegasusTrail.usdz in Resources */ = {isa = PBXBuildFile; fileRef = F70A77E52BB699950003C243 /* PegasusTrail.usdz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +60,9 @@
 		D770792B2BC3F9A100568AB1 /* Quality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quality.swift; sourceTree = "<group>"; };
 		D770792D2BC3FC1F00568AB1 /* QualityPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualityPicker.swift; sourceTree = "<group>"; };
 		D77079312BC4E77F00568AB1 /* ColorExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExt.swift; sourceTree = "<group>"; };
+		F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickLookPreview.swift; sourceTree = "<group>"; };
+		F70A77E32BB6984B0003C243 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		F70A77E52BB699950003C243 /* PegasusTrail.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = PegasusTrail.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F70A77E42BB6984B0003C243 /* Quartz.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,10 +94,12 @@
 		D74ED1E82BAD622B0081F7DA = {
 			isa = PBXGroup;
 			children = (
+				F70A77E52BB699950003C243 /* PegasusTrail.usdz */,
 				D74ED1F32BAD622B0081F7DA /* ObjectCapture */,
 				D74ED2052BAD622D0081F7DA /* ObjectCaptureTests */,
 				D74ED20F2BAD622D0081F7DA /* ObjectCaptureUITests */,
 				D74ED1F22BAD622B0081F7DA /* Products */,
+				F70A77E22BB6984B0003C243 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,6 +156,7 @@
 		D77079272BC3F6F800568AB1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */,
 				D74ED2212BB14D9D0081F7DA /* FolderButton.swift */,
 				D74ED2232BB159EC0081F7DA /* FolderSelectionView.swift */,
 				D77079282BC3F75700568AB1 /* Sidebar.swift */,
@@ -169,6 +179,14 @@
 				D77079312BC4E77F00568AB1 /* ColorExt.swift */,
 			);
 			path = Ext;
+			sourceTree = "<group>";
+		};
+		F70A77E22BB6984B0003C243 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F70A77E32BB6984B0003C243 /* Quartz.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -276,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D74ED1FC2BAD622C0081F7DA /* Preview Assets.xcassets in Resources */,
+				F70A77E62BB699950003C243 /* PegasusTrail.usdz in Resources */,
 				D74ED1F92BAD622C0081F7DA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,6 +323,7 @@
 				D77079292BC3F75700568AB1 /* Sidebar.swift in Sources */,
 				D77079322BC4E77F00568AB1 /* ColorExt.swift in Sources */,
 				D74ED1F72BAD622B0081F7DA /* ContentView.swift in Sources */,
+				F70A77E12BB6950E0003C243 /* QuickLookPreview.swift in Sources */,
 				D770792C2BC3F9A100568AB1 /* Quality.swift in Sources */,
 				D74ED2242BB159EC0081F7DA /* FolderSelectionView.swift in Sources */,
 				D74ED1F52BAD622B0081F7DA /* ObjectCaptureApp.swift in Sources */,

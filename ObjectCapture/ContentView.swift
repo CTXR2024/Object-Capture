@@ -7,18 +7,22 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                Sidebar()
+                VStack {
+                    Color.white
+                }
+            }.frame(width: geo.size.width, height: geo.size.height)
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
 }
+

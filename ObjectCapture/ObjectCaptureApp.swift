@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct ObjectCaptureApp: App {
+    
+    @State private var showSheet = false
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

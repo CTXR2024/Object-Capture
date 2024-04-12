@@ -4,11 +4,16 @@ import SceneKit
 
 struct QuickLookPreview: View {
     var body: some View {
-        SceneKitView()
+        // load the native .uzdz
+        SceneKitView(modelURL:Bundle.main.url(forResource: "PegasusTrail", withExtension: "usdz")!)
     }
 }
 
 struct SceneKitView: NSViewRepresentable {
+    private var modelURL: URL
+    init(modelURL: URL){
+        self.modelURL = modelURL
+    }
     func makeNSView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.scene = SCNScene()
@@ -16,27 +21,26 @@ struct SceneKitView: NSViewRepresentable {
         scnView.autoenablesDefaultLighting = true
         
         
-        // load the native .uzdz
-        if let fileURL = Bundle.main.url(forResource: "PegasusTrail", withExtension: "usdz") {
-            do {
-                let scene = try SCNScene(url: fileURL, options: nil)
-                scnView.scene = scene
-                
-                // 加载模型并调整相机
-                if let modelNode = scene.rootNode.childNodes.first {
-                    adjustCameraPosition(sceneView: scnView, modelNode: modelNode)
-                }
-            } catch {
-                print("Error loading scene: \(error)")
+        
+        do {
+            let scene = try SCNScene(url: modelURL, options: nil)
+            scnView.scene = scene
+            
+            // 加载模型并调整相机
+            if let modelNode = scene.rootNode.childNodes.first {
+                adjustCameraPosition(sceneView: scnView, modelNode: modelNode)
             }
+        } catch {
+            print("Error loading scene: \(error)")
         }
+        
         
         // launch the default light
         scnView.autoenablesDefaultLighting = true
         
         // creare the custom grid into the scene view
         let gridNode = createGridNode(size: 300, divisions: 50, color: NSColor.gray)
-        scnView.scene?.rootNode.addChildNode(gridNode)
+        //scnView.scene?.rootNode.addChildNode(gridNode)
         
         // auto adjust the camera position
         //        scnView.pointOfView?.camera?.automaticallyAdjustsZRange = true

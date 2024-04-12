@@ -11,7 +11,7 @@ import RealityKit
 import UserNotifications
 
 struct Sidebar: View {
-   
+    
     private static let defualtWidth: CGFloat = 220.0
     @State private var processingErrorOccurred = false
     @State private var width: CGFloat = defualtWidth //  defautl width is 220pt
@@ -94,7 +94,7 @@ extension Sidebar {
         }else{
             panel.title = text
         }
-               
+        
         panel.canCreateDirectories = true
         panel.allowsOtherFileTypes = false
         panel.allowedContentTypes = [.usdz]
@@ -126,13 +126,13 @@ private extension Sidebar {
     private func createModel(permanent: URL? = nil) {
         
         processingErrorOccurred = false
-
+        
         guard let inputURL = selectedImageFolder else {
             processingErrorOccurred = true
             selectSourceFolder()
             return
         }
-
+        
         do {
             photogrammetrySession = try PhotogrammetrySession(input: inputURL, configuration: psConfig)
         } catch {
@@ -140,10 +140,10 @@ private extension Sidebar {
             processingErrorOccurred = true
             return
         }
-
+        
         let temporarySaveURL = ModelFileManager().generateTempModelURL(appropriateFor: permanent)
         let request = PhotogrammetrySession.Request.modelFile(url: temporarySaveURL, detail: permanent == nil ? .preview : selectedQuality.detail)
-
+        
         Task(priority: .userInitiated) {
             do {
                 for try await output in photogrammetrySession!.outputs {
@@ -183,12 +183,12 @@ private extension Sidebar {
                 processingErrorOccurred = true
             }
         }
-
+        
         do {
             withAnimation {
                 sharedData.modelProgressViewState = .initializing
             }
-
+            
             try photogrammetrySession!.process(requests: [request])
         } catch {
             print("Cannot process requests. ERROR=\(error)")
@@ -207,19 +207,19 @@ private extension Sidebar {
             sendCreationConclusionNotification(success: false, exportedModelFilename: permenantSaveURL?.lastPathComponent)
             return
         }
-
+        
         let modelFileManager = ModelFileManager()
-
+        
         let oldModelURL = sharedData.modelViewerModelURL
-
+        
         withAnimation {
             sharedData.modelViewerModelURL = temporaryLocation
         }
-
+        
         if let oldURL = oldModelURL {
             try? modelFileManager.removeTempModel(modelURL: oldURL)
         }
-
+        
         if let saveURL = permenantSaveURL {
             sharedData.modelProgressViewState = .copying
             do {
@@ -237,53 +237,70 @@ private extension Sidebar {
         }
         sendCreationConclusionNotification(success: true, exportedModelFilename: permenantSaveURL?.lastPathComponent)
     }
-    private func sendCreationConclusionNotification(success: Bool, exportedModelFilename: String?) {
-        let content = UNMutableNotificationContent()
-
-        if let filename = exportedModelFilename {
-            if success {
-                content.title = String(
-                    localized: "ModelExportSuccessNotificationTitle",
-                    comment: "Notification title for model export success")
-                content.subtitle = String(format:
-                                            String(
-                                                localized: "ModelExportSuccessNotificationBody %@",
-                                                comment: "Notification body for model export success"),
-                                          filename)
-            } else {
-                content.title = String(
-                    localized: "ModelExportFailureNotificationTitle",
-                    comment: "Notification title for model export failure")
-                content.subtitle = String(format:
-                                            String(
-                                                localized: "ModelExportFailureNotificationBody %@",
-                                                comment: "Notification body for model export failure"),
-                                          filename)
-            }
-        } else if let inputFolderName = selectedImageFolder?.lastPathComponent {
-            if success {
-                content.title = String(
-                    localized: "PreviewCreationSuccessNotificationTitle",
-                    comment: "Notification title for preview creation success")
-                content.subtitle = String(
-                    format: String(
-                        localized: "PreviewCreationSuccessNotificationBody %@",
-                        comment: "Notification body for preview creation success"),
-                    inputFolderName)
-            } else {
-                content.title = String(
-                    localized: "PreviewCreationFailureNotificationTitle",
-                    comment: "Notification title for preview creation failure")
-                content.subtitle = String(format:
-                                            String(
-                                                localized: "PreviewCreationFailureNotificationBody %@",
-                                                comment: "Notification body for preview creation failure"),
-                                          inputFolderName)
-            }
+    private func requestNotificationPermission(completionHandler: @escaping (Bool, Error?) -> Void){
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert,.sound,.badge],completionHandler:completionHandler)
+    }
+    private func openSystemPreferences(){
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
+            NSWorkspace.shared.open(url)
         }
-
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+    }
+    func getApplicationName() -> String {
+        if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String {
+            return appName
+        } else if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String {
+            return appName
+        }
+        return "App"
+    }
+    private func sendCreationConclusionNotification(success: Bool, exportedModelFilename: String?) {
+        
+        requestNotificationPermission{granted,error in
+            guard granted else{
+                print("Notification permission not granted. \(String(describing: error))")
+                DispatchQueue.main.async {
+                    let alter = NSAlert()
+                    alter.messageText = "Local notification permission"
+                    alter.informativeText = "Pls select \(getApplicationName()) in the list to grand the permission."
+                    alter.alertStyle = .informational
+                    alter.addButton(withTitle: "OK")
+                    alter.addButton(withTitle: "Cancel")
+                    let response = alter.runModal()
+                    switch response{
+                    case .alertFirstButtonReturn://OK
+                        openSystemPreferences()
+                    default:
+                        break
+                    }
+                }
+                return
+            }
+            let content = UNMutableNotificationContent()
+            
+            if let filename = exportedModelFilename {
+                if success {
+                    content.title = "ModelExportSuccessNotificationTitle"
+                    content.subtitle = String(format:"ModelExportSuccessNotificationBody %@",filename)
+                } else {
+                    content.title = "ModelExportFailureNotificationTitle"
+                    content.subtitle = String(format:"ModelExportFailureNotificationBody %@",filename)
+                }
+                
+            } else if let inputFolderName = selectedImageFolder?.lastPathComponent {
+                if success {
+                    content.title = "PreviewCreationSuccessNotificationTitle"
+                    content.subtitle = String(
+                        format: "PreviewCreationSuccessNotificationBody %@",inputFolderName)
+                } else {
+                    content.title = "PreviewCreationFailureNotificationTitle"
+                    content.subtitle = String(format:"PreviewCreationFailureNotificationBody %@",inputFolderName)
+                }
+            }
+            
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+            UNUserNotificationCenter.current().add(request)
+        }
     }
 }
 

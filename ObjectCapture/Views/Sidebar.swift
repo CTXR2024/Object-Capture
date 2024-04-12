@@ -126,76 +126,98 @@ private extension Sidebar {
     private func createModel(permanent: URL? = nil) {
         
         processingErrorOccurred = false
-        
+        // check inout =folder
         guard let inputURL = selectedImageFolder else {
             processingErrorOccurred = true
             selectSourceFolder()
             return
         }
-        
-        do {
-            photogrammetrySession = try PhotogrammetrySession(input: inputURL, configuration: psConfig)
-        } catch {
-            print("Could not create photogrammetry session, aborting...")
-            processingErrorOccurred = true
-            return
-        }
-        
-        let temporarySaveURL = ModelFileManager().generateTempModelURL(appropriateFor: permanent)
-        let request = PhotogrammetrySession.Request.modelFile(url: temporarySaveURL, detail: permanent == nil ? .preview : selectedQuality.detail)
-        
-        Task(priority: .userInitiated) {
-            do {
-                for try await output in photogrammetrySession!.outputs {
-                    switch output {
-                    case .inputComplete:
-                        print("Successfully initiallized images, beginning processing...")
-                    case .requestError:
-                        print("Request error!")
-                        processingErrorOccurred = true
-                        
-                    case .requestComplete:
-                        print("Completed request!")
-                    case .requestProgress(_, fractionComplete: let fractionComplete):
-                        print("Current request is \(Int(fractionComplete*100))% complete")
-                        sharedData.modelProgressViewState = .bar
-                        sharedData.modelProcessingProgress = fractionComplete
-                    case .processingComplete:
-                        print("Done processing!")
-                        handleCreationCompletion(temporaryLocation: temporarySaveURL, permenantSaveURL: permanent)
-                    case .processingCancelled:
-                        print("Processing is cancelled")
-                        withAnimation {
-                            sharedData.modelProgressViewState = .hidden
-                        }
-                    case .invalidSample(id: let id, reason: let reason):
-                        print("Sample with the id \(id) is invalid. Reason: \(reason)")
-                    case .skippedSample(id: let id):
-                        print("Skipped a sample image with id: \(id)")
-                    case .automaticDownsampling:
-                        print("Enabled auto downsampling because of limited system resources!")
-                    @unknown default:
-                        print("Received unknown session output: \(output)")
+        // check notification permission
+        requestNotificationPermission{granted,error in
+            guard granted else{
+                print("Notification permission not granted. \(String(describing: error))")
+                DispatchQueue.main.async {
+                    let alter = NSAlert()
+                    alter.messageText = "Local notification permission"
+                    alter.informativeText = "Pls select \(getApplicationName()) in the list to grand the permission."
+                    alter.alertStyle = .informational
+                    alter.addButton(withTitle: "OK")
+                    alter.addButton(withTitle: "Cancel")
+                    let response = alter.runModal()
+                    switch response{
+                    case .alertFirstButtonReturn://OK
+                        openSystemPreferences()
+                    default:
+                        break
                     }
                 }
-            } catch {
-                print("Unexpected fatal session error. Aborting... ERROR=\(error)")
-                processingErrorOccurred = true
+                return
             }
-        }
-        
-        do {
-            withAnimation {
-                sharedData.modelProgressViewState = .initializing
+            do {
+                photogrammetrySession = try PhotogrammetrySession(input: inputURL, configuration: psConfig)
+            } catch {
+                print("Could not create photogrammetry session, aborting...")
+                processingErrorOccurred = true
+                return
             }
             
-            try photogrammetrySession!.process(requests: [request])
-        } catch {
-            print("Cannot process requests. ERROR=\(error)")
-            processingErrorOccurred = true
-            withAnimation {
-                sharedData.modelProgressViewState = .hidden
+            let temporarySaveURL = ModelFileManager().generateTempModelURL(appropriateFor: permanent)
+            let request = PhotogrammetrySession.Request.modelFile(url: temporarySaveURL, detail: permanent == nil ? .preview : selectedQuality.detail)
+            
+            Task(priority: .userInitiated) {
+                do {
+                    for try await output in photogrammetrySession!.outputs {
+                        switch output {
+                        case .inputComplete:
+                            print("Successfully initiallized images, beginning processing...")
+                        case .requestError:
+                            print("Request error!")
+                            processingErrorOccurred = true
+                            
+                        case .requestComplete:
+                            print("Completed request!")
+                        case .requestProgress(_, fractionComplete: let fractionComplete):
+                            print("Current request is \(Int(fractionComplete*100))% complete")
+                            sharedData.modelProgressViewState = .bar
+                            sharedData.modelProcessingProgress = fractionComplete
+                        case .processingComplete:
+                            print("Done processing!")
+                            handleCreationCompletion(temporaryLocation: temporarySaveURL, permenantSaveURL: permanent)
+                        case .processingCancelled:
+                            print("Processing is cancelled")
+                            withAnimation {
+                                sharedData.modelProgressViewState = .hidden
+                            }
+                        case .invalidSample(id: let id, reason: let reason):
+                            print("Sample with the id \(id) is invalid. Reason: \(reason)")
+                        case .skippedSample(id: let id):
+                            print("Skipped a sample image with id: \(id)")
+                        case .automaticDownsampling:
+                            print("Enabled auto downsampling because of limited system resources!")
+                        @unknown default:
+                            print("Received unknown session output: \(output)")
+                        }
+                    }
+                } catch {
+                    print("Unexpected fatal session error. Aborting... ERROR=\(error)")
+                    processingErrorOccurred = true
+                }
             }
+            
+            do {
+                withAnimation {
+                    sharedData.modelProgressViewState = .initializing
+                }
+                
+                try photogrammetrySession!.process(requests: [request])
+            } catch {
+                print("Cannot process requests. ERROR=\(error)")
+                processingErrorOccurred = true
+                withAnimation {
+                    sharedData.modelProgressViewState = .hidden
+                }
+            }
+            
         }
         
     }
@@ -213,7 +235,7 @@ private extension Sidebar {
         let oldModelURL = sharedData.modelViewerModelURL
         
         withAnimation {
-            sharedData.modelViewerModelURL = temporaryLocation
+                sharedData.modelViewerModelURL = temporaryLocation
         }
         
         if let oldURL = oldModelURL {
@@ -256,51 +278,30 @@ private extension Sidebar {
     }
     private func sendCreationConclusionNotification(success: Bool, exportedModelFilename: String?) {
         
-        requestNotificationPermission{granted,error in
-            guard granted else{
-                print("Notification permission not granted. \(String(describing: error))")
-                DispatchQueue.main.async {
-                    let alter = NSAlert()
-                    alter.messageText = "Local notification permission"
-                    alter.informativeText = "Pls select \(getApplicationName()) in the list to grand the permission."
-                    alter.alertStyle = .informational
-                    alter.addButton(withTitle: "OK")
-                    alter.addButton(withTitle: "Cancel")
-                    let response = alter.runModal()
-                    switch response{
-                    case .alertFirstButtonReturn://OK
-                        openSystemPreferences()
-                    default:
-                        break
-                    }
-                }
-                return
-            }
-            let content = UNMutableNotificationContent()
-            
-            if let filename = exportedModelFilename {
-                if success {
-                    content.title = "ModelExportSuccessNotificationTitle"
-                    content.subtitle = String(format:"ModelExportSuccessNotificationBody %@",filename)
-                } else {
-                    content.title = "ModelExportFailureNotificationTitle"
-                    content.subtitle = String(format:"ModelExportFailureNotificationBody %@",filename)
-                }
-                
-            } else if let inputFolderName = selectedImageFolder?.lastPathComponent {
-                if success {
-                    content.title = "PreviewCreationSuccessNotificationTitle"
-                    content.subtitle = String(
-                        format: "PreviewCreationSuccessNotificationBody %@",inputFolderName)
-                } else {
-                    content.title = "PreviewCreationFailureNotificationTitle"
-                    content.subtitle = String(format:"PreviewCreationFailureNotificationBody %@",inputFolderName)
-                }
+        let content = UNMutableNotificationContent()
+        
+        if let filename = exportedModelFilename {
+            if success {
+                content.title = "ModelExportSuccessNotificationTitle"
+                content.subtitle = String(format:"ModelExportSuccessNotificationBody %@",filename)
+            } else {
+                content.title = "ModelExportFailureNotificationTitle"
+                content.subtitle = String(format:"ModelExportFailureNotificationBody %@",filename)
             }
             
-            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-            UNUserNotificationCenter.current().add(request)
+        } else if let inputFolderName = selectedImageFolder?.lastPathComponent {
+            if success {
+                content.title = "PreviewCreationSuccessNotificationTitle"
+                content.subtitle = String(
+                    format: "PreviewCreationSuccessNotificationBody %@",inputFolderName)
+            } else {
+                content.title = "PreviewCreationFailureNotificationTitle"
+                content.subtitle = String(format:"PreviewCreationFailureNotificationBody %@",inputFolderName)
+            }
         }
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request)
     }
 }
 

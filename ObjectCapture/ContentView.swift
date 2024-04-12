@@ -12,6 +12,7 @@ struct ContentView: View {
     @EnvironmentObject private var sharedData: SharedData
     @State private var photogrammetrySession: PhotogrammetrySession?
     @State private var showingCancelAlert = false
+    @State private var shouldResetCamera = false
     var body: some View {
         GeometryReader { geo in
             HStack(spacing: 0) {
@@ -20,7 +21,7 @@ struct ContentView: View {
                 ZStack{
                     Group{
                         if let modelURL = sharedData.modelViewerModelURL{
-                            SceneKitView(modelURL: modelURL)
+                            ModelViewer(modelURL: modelURL,shouldResetCamera: $shouldResetCamera).frame(maxWidth:.infinity, maxHeight: .infinity)
                         } else {
                             Label("Preview or export a model to see it here!", systemImage: "arkit").font(.title2).padding(150)
                         }

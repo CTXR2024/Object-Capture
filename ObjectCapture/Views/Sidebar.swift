@@ -61,8 +61,10 @@ private extension Sidebar {
         VStack(alignment: .leading, spacing: 20) {
             Text("Final Processing Quality")
             QualityPicker()
-            Button("Create Model") {
-                //todo generate the model
+            Button(action: {}) {
+                Text("Create Model")
+                    .font(.caption2)
+                    .frame(maxWidth: .infinity)
             }
             .font(.caption2)
             .frame(maxWidth: .infinity)

@@ -24,9 +24,14 @@ struct FolderButton: View {
                     .lineLimit(1)
                     .foregroundColor(Color(nsColor: isSelected ? .selectedControlTextColor : .disabledControlTextColor))
             }
+            .frame(maxWidth:.infinity)
+            .padding(10)
+            .background(
+                RoundedRectangle(cornerRadius: 10.0)
+                    .fill(Color(nsColor: .windowBackgroundColor)))
         }
-        .padding(10)
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+        
     }
 }
 

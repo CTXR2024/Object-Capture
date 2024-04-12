@@ -20,6 +20,7 @@
 		D770792C2BC3F9A100568AB1 /* Quality.swift in Sources */ = {isa = PBXBuildFile; fileRef = D770792B2BC3F9A100568AB1 /* Quality.swift */; };
 		D770792E2BC3FC1F00568AB1 /* QualityPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D770792D2BC3FC1F00568AB1 /* QualityPicker.swift */; };
 		D77079322BC4E77F00568AB1 /* ColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77079312BC4E77F00568AB1 /* ColorExt.swift */; };
+		E2B02AFF2BC926BA005A4C37 /* AlertTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B02AFE2BC926BA005A4C37 /* AlertTools.swift */; };
 		F70A77E12BB6950E0003C243 /* QuickLookPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */; };
 		F70A77E42BB6984B0003C243 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F70A77E32BB6984B0003C243 /* Quartz.framework */; };
 		F70A77E62BB699950003C243 /* PegasusTrail.usdz in Resources */ = {isa = PBXBuildFile; fileRef = F70A77E52BB699950003C243 /* PegasusTrail.usdz */; };
@@ -60,6 +61,7 @@
 		D770792B2BC3F9A100568AB1 /* Quality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quality.swift; sourceTree = "<group>"; };
 		D770792D2BC3FC1F00568AB1 /* QualityPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualityPicker.swift; sourceTree = "<group>"; };
 		D77079312BC4E77F00568AB1 /* ColorExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExt.swift; sourceTree = "<group>"; };
+		E2B02AFE2BC926BA005A4C37 /* AlertTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTools.swift; sourceTree = "<group>"; };
 		F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickLookPreview.swift; sourceTree = "<group>"; };
 		F70A77E32BB6984B0003C243 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		F70A77E52BB699950003C243 /* PegasusTrail.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = PegasusTrail.usdz; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 		D74ED1F32BAD622B0081F7DA /* ObjectCapture */ = {
 			isa = PBXGroup;
 			children = (
+				E2B02AFD2BC926A6005A4C37 /* Alert */,
 				D77079302BC4E75C00568AB1 /* Ext */,
 				D770792A2BC3F97F00568AB1 /* Enums */,
 				D77079272BC3F6F800568AB1 /* Views */,
@@ -179,6 +182,14 @@
 				D77079312BC4E77F00568AB1 /* ColorExt.swift */,
 			);
 			path = Ext;
+			sourceTree = "<group>";
+		};
+		E2B02AFD2BC926A6005A4C37 /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				E2B02AFE2BC926BA005A4C37 /* AlertTools.swift */,
+			);
+			path = Alert;
 			sourceTree = "<group>";
 		};
 		F70A77E22BB6984B0003C243 /* Frameworks */ = {
@@ -328,6 +339,7 @@
 				D74ED2242BB159EC0081F7DA /* FolderSelectionView.swift in Sources */,
 				D74ED1F52BAD622B0081F7DA /* ObjectCaptureApp.swift in Sources */,
 				D770792E2BC3FC1F00568AB1 /* QualityPicker.swift in Sources */,
+				E2B02AFF2BC926BA005A4C37 /* AlertTools.swift in Sources */,
 				D74ED2222BB14D9D0081F7DA /* FolderButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

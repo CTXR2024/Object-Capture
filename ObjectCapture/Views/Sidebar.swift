@@ -47,6 +47,7 @@ private extension Sidebar {
             }
             Button(action: {
                 //todo generate the quality of preview model
+                AlertTools.shared.show("sadsad", message: "hhhh")
             }) {
                 Text("Preview")
                     .font(.caption2)

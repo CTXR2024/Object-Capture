@@ -8,7 +8,10 @@
 import SwiftUI
 
 
+
 struct ContentView: View {
+    @ObservedObject var alertData = AlertTools.shared
+    @State private var showAlert = false
     
     var body: some View {
         GeometryReader { geo in
@@ -16,6 +19,13 @@ struct ContentView: View {
                 Sidebar()
                 QuickLookPreview()
             }.frame(width: geo.size.width, height: geo.size.height)
+                .alert(isPresented: $alertData.isPresented) {
+                    Alert(
+                        title: Text(alertData.title),
+                        message: (alertData.message != nil) ? Text(alertData.message ?? "") : nil
+                    )
+                    
+                }
         }
     }
 }

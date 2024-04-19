@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AlertData: Identifiable {
     var id = UUID().uuidString
-    var isPresented = true
+
     var title: String
     var message: String?
     var primaryTitle: String?
@@ -24,11 +24,7 @@ class AlertTools: ObservableObject {
     
     @Published var list: [AlertData] = [] {
         didSet {
-            if list.isEmpty {
-                isPresented = false
-            } else if isPresented == false {
-                isPresented = true
-            }
+            isPresented = !list.isEmpty
         }
     }
     
@@ -66,7 +62,7 @@ extension View {
 }
 
 struct CustomAlertModifier: ViewModifier {
-    @ObservedObject var alertTools: AlertTools = AlertTools.shared
+    @ObservedObject var alertTools = AlertTools.shared
     
     func body(content: Content) -> some View {
         
@@ -74,8 +70,7 @@ struct CustomAlertModifier: ViewModifier {
             ZStack {
                 
                 ForEach(alertTools.list) {alertData in
-                    let index = alertTools.list.firstIndex(where: { $0.id == alertData.id })
-                    
+
                     VStack {
                         VStack(spacing: 20) {
                             VStack(spacing: 10) {

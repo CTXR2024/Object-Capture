@@ -7,23 +7,80 @@
 
 import SwiftUI
 
+struct AlertData: Identifiable {
+    var id = UUID().uuidString
+    
+    var title: String
+    var message: String?
+    var onPrimary: (() -> Void)? = nil
+    var onSecondary: (() -> Void)? = nil
+}
+
 class AlertTools: ObservableObject {
     static let shared = AlertTools()
     private init() {}
     
-    @Published var isPresented: Bool = false
-    @Published var title: String = ""
-    @Published var message: String? = nil
-    @Published var onPrimary: (() -> Void)? = nil
-    @Published var onSecondary: (() -> Void)? = nil
+    @Published var list: [AlertData] = [] {
+        didSet {
+            if list.isEmpty {
+                isPresented = false
+            } else if isPresented == false {
+                isPresented = true
+            }
+        }
+    }
     
-    func show(_ title: String, message: String? = nil, onPrimary: (() -> Void)? = nil, onSecondary: (() -> Void)? = nil) {
-        self.isPresented = true
-        self.title = title
-        self.message = message
-        self.onPrimary = onPrimary
-        self.onSecondary = onSecondary
+    @Published var isPresented: Bool = false
+
+    static func show(_ title: String, message: String? = nil, onPrimary: (() -> Void)? = nil, onSecondary: (() -> Void)? = nil) {
+        let data = AlertData(title: title, message: message, onPrimary: onPrimary, onSecondary: onSecondary)
+        AlertTools.shared.list.append(data)
     }
     
     
 }
+
+extension View {
+    public func customAlert() -> some View {
+        let alertTools = AlertTools.shared
+        return self.modifier(CustomAlertModifier(alertTools: alertTools))
+    }
+}
+
+struct CustomAlertModifier: ViewModifier {
+    @ObservedObject var alertTools: AlertTools
+    
+    func body(content: Content) -> some View {
+        content.sheet(isPresented: $alertTools.isPresented) {
+            ZStack {
+                ForEach(alertTools.list) {alertData in
+                    VStack {
+                        Text(alertData.title)
+                        Text(alertData.message ?? "")
+                        
+                        Button("Primary Button") {
+                            alertData.onPrimary?()
+                            if let index = alertTools.list.firstIndex(where: { $0.id == alertData.id }) {
+                                alertTools.list.remove(at: index)
+                            }
+                        }
+                        
+                        Button("Secondary Button") {
+                            alertData.onSecondary?()
+                            
+                            if let index = alertTools.list.firstIndex(where: { $0.id == alertData.id }) {
+                                alertTools.list.remove(at: index)
+                            }
+                        }
+                        
+                    }
+                    .frame(width: 200, height: 300)
+                    .background(Color.black)
+                }
+            }.background(Color.red)
+            
+        }
+    }
+}
+
+

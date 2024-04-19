@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AlertData: Identifiable {
     var id = UUID().uuidString
-    
+    var isPresented = true
     var title: String
     var message: String?
     var primaryTitle: String?
@@ -70,48 +70,53 @@ struct CustomAlertModifier: ViewModifier {
     @ObservedObject var alertTools: AlertTools
     
     func body(content: Content) -> some View {
+        
         content.sheet(isPresented: $alertTools.isPresented) {
             ZStack {
+                
                 ForEach(alertTools.list) {alertData in
                     let index = alertTools.list.firstIndex(where: { $0.id == alertData.id })
                     
-                    VStack(spacing: 20) {
-                        VStack(spacing: 10) {
-                            Text(alertData.title)
-                            Text(alertData.message ?? "")
-                        }
-                        
-                        
-                        if alertData.primaryTitle != nil || alertData.secondaryTitle != nil {
-                            Spacer(minLength: 50)
-                            if let title = alertData.primaryTitle {
-                                Button(action: {
-                                    alertData.onPrimary?()
-                                    alertTools.dismiss(alertData)
-                                }, label: {
-                                    HStack {
-                                        Text(title)
-                                    }.frame(height: 25).frame(maxWidth: .infinity)
-                                })
+                    VStack {
+                        VStack(spacing: 20) {
+                            VStack(spacing: 10) {
+                                Text(alertData.title)
+                                Text(alertData.message ?? "")
                             }
                             
-                            if let title = alertData.secondaryTitle{
-                                Button(action: {
-                                    alertData.onSecondary?()
-                                    alertTools.dismiss(alertData)
-                                }, label: {
-                                    HStack {
-                                        Text(title)
-                                    }.frame(height: 25).frame(maxWidth: .infinity)
-                                })
+                            
+                            if alertData.primaryTitle != nil || alertData.secondaryTitle != nil {
+                                Spacer(minLength: 50)
+                                if let title = alertData.primaryTitle {
+                                    Button(action: {
+                                        alertData.onPrimary?()
+                                        alertTools.dismiss(alertData)
+                                    }, label: {
+                                        HStack {
+                                            Text(title)
+                                        }.frame(height: 25).frame(maxWidth: .infinity)
+                                    })
+                                }
+                                
+                                if let title = alertData.secondaryTitle{
+                                    Button(action: {
+                                        alertData.onSecondary?()
+                                        alertTools.dismiss(alertData)
+                                    }, label: {
+                                        HStack {
+                                            Text(title)
+                                        }.frame(height: 25).frame(maxWidth: .infinity)
+                                    })
+                                }
                             }
-                        }
-                        
-                    }.padding(.vertical, 40).padding(.horizontal, 20)
-                        .frame(width: 250)
-                        .background(Color.black)
+                            
+                        }.padding(.vertical, 40).padding(.horizontal, 20)
+                            .frame(width: 280)
+                            .background(Color.black).border(Color.white.opacity(0.1), width: 2)
+                    }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.black)
+                    
                 }
-            }.background(Color.red).shadow(radius: 5)
+            }
             
         }
     }

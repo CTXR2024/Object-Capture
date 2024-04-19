@@ -61,13 +61,12 @@ class AlertTools: ObservableObject {
 
 extension View {
     public func customAlert() -> some View {
-        let alertTools = AlertTools.shared
-        return self.modifier(CustomAlertModifier(alertTools: alertTools))
+        return self.modifier(CustomAlertModifier())
     }
 }
 
 struct CustomAlertModifier: ViewModifier {
-    @ObservedObject var alertTools: AlertTools
+    @ObservedObject var alertTools: AlertTools = AlertTools.shared
     
     func body(content: Content) -> some View {
         

@@ -47,7 +47,7 @@ private extension Sidebar {
             }
             Button(action: {
                 //todo generate the quality of preview model
-                AlertTools.show("sadsad", message: "hhhh")
+                AlertTools.show("sadsad", message: "hhhh", primaryTitle: "Close")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                     AlertTools.show("222222", message: "2222222")
                 })

@@ -12,6 +12,8 @@ struct AlertData: Identifiable {
     
     var title: String
     var message: String?
+    var primaryTitle: String?
+    var secondaryTitle: String?
     var onPrimary: (() -> Void)? = nil
     var onSecondary: (() -> Void)? = nil
 }
@@ -31,10 +33,27 @@ class AlertTools: ObservableObject {
     }
     
     @Published var isPresented: Bool = false
-
-    static func show(_ title: String, message: String? = nil, onPrimary: (() -> Void)? = nil, onSecondary: (() -> Void)? = nil) {
-        let data = AlertData(title: title, message: message, onPrimary: onPrimary, onSecondary: onSecondary)
+    
+    static func show(_ title: String, message: String? = nil, primaryTitle: String? = nil, secondaryTitle: String? = nil, onPrimary: (() -> Void)? = nil, onSecondary: (() -> Void)? = nil) {
+        let data = AlertData(title: title, message: message, primaryTitle: primaryTitle, secondaryTitle: secondaryTitle, onPrimary: onPrimary, onSecondary: onSecondary)
         AlertTools.shared.list.append(data)
+        if data.primaryTitle == nil && data.secondaryTitle == nil {
+            AlertTools.shared.autoDismiss(data)
+        }
+    }
+    
+    func dismiss(_ data: AlertData) {
+        if let index = list.firstIndex(where: { $0.id == data.id }) {
+            list.remove(at: index)
+        }
+    }
+    
+    func autoDismiss(_ data: AlertData) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: { [self] in
+            if let index = list.firstIndex(where: { $0.id == data.id }) {
+                list.remove(at: index)
+            }
+        })
     }
     
     
@@ -54,33 +73,49 @@ struct CustomAlertModifier: ViewModifier {
         content.sheet(isPresented: $alertTools.isPresented) {
             ZStack {
                 ForEach(alertTools.list) {alertData in
-                    VStack {
-                        Text(alertData.title)
-                        Text(alertData.message ?? "")
-                        Spacer()
-                        Button("Close") {
-                            alertData.onPrimary?()
-                            if let index = alertTools.list.firstIndex(where: { $0.id == alertData.id }) {
-                                alertTools.list.remove(at: index)
+                    let index = alertTools.list.firstIndex(where: { $0.id == alertData.id })
+                    
+                    VStack(spacing: 20) {
+                        VStack(spacing: 10) {
+                            Text(alertData.title)
+                            Text(alertData.message ?? "")
+                        }
+                        
+                        
+                        if alertData.primaryTitle != nil || alertData.secondaryTitle != nil {
+                            Spacer(minLength: 50)
+                            if let title = alertData.primaryTitle {
+                                Button(action: {
+                                    alertData.onPrimary?()
+                                    alertTools.dismiss(alertData)
+                                }, label: {
+                                    HStack {
+                                        Text(title)
+                                    }.frame(height: 25).frame(maxWidth: .infinity)
+                                })
+                            }
+                            
+                            if let title = alertData.secondaryTitle{
+                                Button(action: {
+                                    alertData.onSecondary?()
+                                    alertTools.dismiss(alertData)
+                                }, label: {
+                                    HStack {
+                                        Text(title)
+                                    }.frame(height: 25).frame(maxWidth: .infinity)
+                                })
                             }
                         }
                         
-//                        Button("Secondary Button") {
-//                            alertData.onSecondary?()
-//                            
-//                            if let index = alertTools.list.firstIndex(where: { $0.id == alertData.id }) {
-//                                alertTools.list.remove(at: index)
-//                            }
-//                        }
-                        
                     }.padding(.vertical, 40).padding(.horizontal, 20)
-                    .frame(width: 200, height: 300)
-                    .background(Color.black)
+                        .frame(width: 250)
+                        .background(Color.black)
                 }
-            }.background(Color.red)
+            }.background(Color.red).shadow(radius: 5)
             
         }
     }
+    
 }
 
 

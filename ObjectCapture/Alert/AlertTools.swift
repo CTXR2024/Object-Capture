@@ -57,23 +57,23 @@ struct CustomAlertModifier: ViewModifier {
                     VStack {
                         Text(alertData.title)
                         Text(alertData.message ?? "")
-                        
-                        Button("Primary Button") {
+                        Spacer()
+                        Button("Close") {
                             alertData.onPrimary?()
                             if let index = alertTools.list.firstIndex(where: { $0.id == alertData.id }) {
                                 alertTools.list.remove(at: index)
                             }
                         }
                         
-                        Button("Secondary Button") {
-                            alertData.onSecondary?()
-                            
-                            if let index = alertTools.list.firstIndex(where: { $0.id == alertData.id }) {
-                                alertTools.list.remove(at: index)
-                            }
-                        }
+//                        Button("Secondary Button") {
+//                            alertData.onSecondary?()
+//                            
+//                            if let index = alertTools.list.firstIndex(where: { $0.id == alertData.id }) {
+//                                alertTools.list.remove(at: index)
+//                            }
+//                        }
                         
-                    }
+                    }.padding(.vertical, 40).padding(.horizontal, 20)
                     .frame(width: 200, height: 300)
                     .background(Color.black)
                 }

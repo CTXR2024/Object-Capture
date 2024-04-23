@@ -26,7 +26,6 @@ struct SceneKitView: NSViewRepresentable {
             let scene = try SCNScene(url: modelURL, options: nil)
             scnView.scene = scene
             
-            // 加载模型并调整相机
             if let modelNode = scene.rootNode.childNodes.first {
                 adjustCameraPosition(sceneView: scnView, modelNode: modelNode)
             }
@@ -37,14 +36,6 @@ struct SceneKitView: NSViewRepresentable {
         
         // launch the default light
         scnView.autoenablesDefaultLighting = true
-        
-        // creare the custom grid into the scene view
-        let gridNode = createGridNode(size: 300, divisions: 50, color: NSColor.gray)
-        //scnView.scene?.rootNode.addChildNode(gridNode)
-        
-        // auto adjust the camera position
-        //        scnView.pointOfView?.camera?.automaticallyAdjustsZRange = true
-        
         return scnView
     }
     

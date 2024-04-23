@@ -16,7 +16,7 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { geo in
             HStack(spacing: 0) {
-                Sidebar(photogrammetrySession: $photogrammetrySession).environmentObject(sharedData)
+                Sidebar(photogrammetrySession: $photogrammetrySession)
                 Spacer()
                 ZStack{
                     Group{
@@ -30,7 +30,6 @@ struct ContentView: View {
                     ModelProgressView(cancelAction: {
                         showingCancelAlert.toggle()
                     })
-                    .environmentObject(sharedData)
                     .padding()
                 }
                 

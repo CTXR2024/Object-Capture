@@ -10,7 +10,6 @@ import RealityKit
 
 enum Quality: String, CaseIterable, Identifiable {
     
-    case preview = "preview"
     case reduced = "Reduced"
     case medium = "Medium"
     case full = "Full"
@@ -22,8 +21,6 @@ enum Quality: String, CaseIterable, Identifiable {
     
     var detail: Detail {
         switch self {
-        case .preview:
-            return .preview
         case .reduced:
             return .reduced
         case .medium:

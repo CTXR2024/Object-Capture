@@ -12,6 +12,8 @@ import UserNotifications
 
 struct Sidebar: View {
     
+    typealias Detail = PhotogrammetrySession.Request.Detail
+    
     private static let defualtWidth: CGFloat = 220.0
     @State private var processingErrorOccurred = false
     @State private var width: CGFloat = defualtWidth //  defautl width is 220pt
@@ -61,40 +63,33 @@ private extension Sidebar {
             QualityPicker(selectedQuality: $selectedQuality)
             Button(action: {
                 if let destinationURL = selectedOutputFolder {
-                    createModel(permanent: destinationURL)
-                }else{
+                    createModel(selectedQuality.detail, permanentURL: destinationURL)
+                } else{
                     selectSaveModelFile()
                 }
             }) {
                 Text("Create Model")
+                    .font(.caption2)
+                    .frame(maxWidth: .infinity)
             }
-            .font(.caption2)
-            .frame(maxWidth: .infinity)
         }
     }
 }
 
 
 extension Sidebar {
+    
     private func openInputImagesFolder() -> URL? {
         let openPanel = NSOpenPanel()
         openPanel.canChooseDirectories = true
         openPanel.canChooseFiles = false
-        if openPanel.runModal() == .OK {
-            return openPanel.url
-        }
-        return nil
+        return openPanel.runModal() == .OK ? openPanel.url : nil
     }
     
     private func openOutputModelFolderPanel() -> URL? {
         let panel = NSSavePanel()
         let text = "Choose a Folder to Save Your Model"
-        if #available(macOS 11.0, *){
-            panel.message = text
-        }else{
-            panel.title = text
-        }
-        
+        panel.title = text
         panel.canCreateDirectories = true
         panel.allowsOtherFileTypes = false
         panel.allowedContentTypes = [.usdz]
@@ -119,11 +114,11 @@ extension Sidebar {
 
 private extension Sidebar {
     private func createPreview() {
-        selectedQuality = .preview
-        createModel()
+        createModel(Detail.preview)
     }
     
-    private func createModel(permanent: URL? = nil) {
+    
+    private func createModel(_ detail: PhotogrammetrySession.Request.Detail, permanentURL: URL? = nil) {
         
         processingErrorOccurred = false
         // check inout =folder
@@ -132,95 +127,119 @@ private extension Sidebar {
             selectSourceFolder()
             return
         }
-        // check notification permission
-        requestNotificationPermission{granted,error in
-            guard granted else{
-                print("Notification permission not granted. \(String(describing: error))")
+        //check notification permission and start session
+        checkNotificationAndStartSession(inputURL: inputURL, detail: detail, permanentURL: permanentURL)
+    }
+    
+    private func checkNotificationAndStartSession(inputURL: URL, detail: Detail, permanentURL: URL? = nil) {
+        requestNotificationPermission { granted, error in
+            guard granted else {
                 DispatchQueue.main.async {
-                    let alter = NSAlert()
-                    alter.messageText = "Local notification permission"
-                    alter.informativeText = "Pls select \(getApplicationName()) in the list to grand the permission."
-                    alter.alertStyle = .informational
-                    alter.addButton(withTitle: "OK")
-                    alter.addButton(withTitle: "Cancel")
-                    let response = alter.runModal()
-                    switch response{
-                    case .alertFirstButtonReturn://OK
-                        openSystemPreferences()
-                    default:
-                        break
-                    }
+                    handleNotificationPermissionDenied()
                 }
                 return
             }
+            startPhotogrammetrySession(inputURL: inputURL, detail: detail, permanentURL: permanentURL)
+        }
+    }
+    
+    private func handleNotificationPermissionDenied() {
+        let alter = NSAlert()
+        alter.messageText = "Local notification permission"
+        alter.informativeText = "Please select \(getApplicationName()) in the list to grant the permission."
+        alter.alertStyle = .informational
+        alter.addButton(withTitle: "OK")
+        alter.addButton(withTitle: "Cancel")
+        let response = alter.runModal()
+        if response == .alertFirstButtonReturn {
+            openSystemPreferences()
+        }
+    }
+    
+    private func startPhotogrammetrySession(inputURL: URL, detail: Detail, permanentURL: URL? = nil) {
+        do {
+            photogrammetrySession = try PhotogrammetrySession(input: inputURL, configuration: psConfig)
+            configureSessionOutputHanling(permanentURL: permanentURL, detail: detail)
+        } catch {
+            print("Could not create photogrammetry session, aborting...")
+            processingErrorOccurred = true
+        }
+    }
+    
+    private func configureSessionOutputHanling(permanentURL: URL?, detail: Detail) {
+        let temporarySaveURL = ModelFileManager().generateTempModelURL(appropriateFor: permanentURL)
+        let request = PhotogrammetrySession.Request.modelFile(url: temporarySaveURL, detail: detail)
+        withAnimation {
+            sharedData.modelProgressViewState = .initializing
+        }
+        processSession(request: request, temporarySaveURL: temporarySaveURL, permanentURL: permanentURL)
+    }
+    
+    private func processSession(request: PhotogrammetrySession.Request, temporarySaveURL: URL, permanentURL: URL?) {
+        guard let session = photogrammetrySession else {return}
+        Task(priority: .userInitiated) {
             do {
-                photogrammetrySession = try PhotogrammetrySession(input: inputURL, configuration: psConfig)
-            } catch {
-                print("Could not create photogrammetry session, aborting...")
-                processingErrorOccurred = true
-                return
-            }
-            
-            let temporarySaveURL = ModelFileManager().generateTempModelURL(appropriateFor: permanent)
-            let request = PhotogrammetrySession.Request.modelFile(url: temporarySaveURL, detail: permanent == nil ? .preview : selectedQuality.detail)
-            
-            Task(priority: .userInitiated) {
-                do {
-                    for try await output in photogrammetrySession!.outputs {
-                        switch output {
-                        case .inputComplete:
-                            print("Successfully initiallized images, beginning processing...")
-                        case .requestError:
-                            print("Request error!")
-                            processingErrorOccurred = true
-                            
-                        case .requestComplete:
-                            print("Completed request!")
-                        case .requestProgress(_, fractionComplete: let fractionComplete):
-                            print("Current request is \(Int(fractionComplete*100))% complete")
+                for try await output in session.outputs {
+                    switch output {
+                    case .processingComplete:
+                        // RealityKit has processed all requests.
+                        DispatchQueue.main.async {
+                            handleCreationCompletion(temporaryLocation: temporarySaveURL, permenantSaveURL: permanentURL)
+                        }
+                    case .requestError(_, _):
+                        // Request encountered an error.
+                        processingErrorOccurred = true
+                    case .requestComplete(_, _):
+                        // RealityKit has finished processing a request.
+                        print("Completed request!")
+                    case .requestProgress(_, let fractionComplete):
+                        // Periodic progress update. Update UI here.
+                        DispatchQueue.main.async {
                             sharedData.modelProgressViewState = .bar
                             sharedData.modelProcessingProgress = fractionComplete
-                        case .processingComplete:
-                            print("Done processing!")
-                            handleCreationCompletion(temporaryLocation: temporarySaveURL, permenantSaveURL: permanent)
-                        case .processingCancelled:
-                            print("Processing is cancelled")
+                        }
+                    case .inputComplete:
+                        // Ingestion of images is complete and processing begins.
+                        print("Successfully initiallized images, beginning processing...")
+                    case .invalidSample(let id, let reason):
+                        // RealityKit deemed a sample invalid and didn't use it.
+                        print("Sample with the id \(id) is invalid. Reason: \(reason)")
+                    case .skippedSample(let id):
+                        // RealityKit was unable to use a provided sample.
+                        print("Skipped a sample image with id: \(id)")
+                    case .automaticDownsampling:
+                        // RealityKit downsampled the input images because of
+                        // resource constraints.
+                        print("Enabled auto downsampling because of limited system resources!")
+                    case .processingCancelled:
+                        // Processing was canceled.
+                        DispatchQueue.main.async {
                             withAnimation {
                                 sharedData.modelProgressViewState = .hidden
                             }
-                        case .invalidSample(id: let id, reason: let reason):
-                            print("Sample with the id \(id) is invalid. Reason: \(reason)")
-                        case .skippedSample(id: let id):
-                            print("Skipped a sample image with id: \(id)")
-                        case .automaticDownsampling:
-                            print("Enabled auto downsampling because of limited system resources!")
-                        @unknown default:
-                            print("Received unknown session output: \(output)")
                         }
+                    @unknown default:
+                        // Unrecognized output.
+                        print("Extra output")
                     }
-                } catch {
-                    print("Unexpected fatal session error. Aborting... ERROR=\(error)")
-                    processingErrorOccurred = true
                 }
-            }
-            
-            do {
-                withAnimation {
-                    sharedData.modelProgressViewState = .initializing
-                }
-                
-                try photogrammetrySession!.process(requests: [request])
             } catch {
-                print("Cannot process requests. ERROR=\(error)")
                 processingErrorOccurred = true
-                withAnimation {
-                    sharedData.modelProgressViewState = .hidden
-                }
             }
-            
         }
-        
+        do {
+            withAnimation {
+                sharedData.modelProgressViewState = .initializing
+            }
+            try session.process(requests: [request])
+        } catch {
+            processingErrorOccurred = true
+            withAnimation {
+                sharedData.modelProgressViewState = .hidden
+            }
+        }
     }
+    
     private func handleCreationCompletion(temporaryLocation: URL, permenantSaveURL: URL? = nil) {
         if processingErrorOccurred {
             withAnimation {
@@ -235,7 +254,7 @@ private extension Sidebar {
         let oldModelURL = sharedData.modelViewerModelURL
         
         withAnimation {
-                sharedData.modelViewerModelURL = temporaryLocation
+            sharedData.modelViewerModelURL = temporaryLocation
         }
         
         if let oldURL = oldModelURL {
@@ -259,10 +278,12 @@ private extension Sidebar {
         }
         sendCreationConclusionNotification(success: true, exportedModelFilename: permenantSaveURL?.lastPathComponent)
     }
+    
     private func requestNotificationPermission(completionHandler: @escaping (Bool, Error?) -> Void){
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert,.sound,.badge],completionHandler:completionHandler)
     }
+    
     private func openSystemPreferences(){
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
             NSWorkspace.shared.open(url)

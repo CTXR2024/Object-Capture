@@ -19,14 +19,8 @@ struct FolderSelectionView : View {
         HStack(spacing: 10.0) {
             FolderButton(isSelected: selectedImageFolder != nil, label: selectedImageFolder?.path ?? "Image Folder", action: inputBlock)
                 .frame(width: 100)
-                .background(RoundedRectangle(cornerRadius: 10.0)
-                    .fill(Color(nsColor: .underPageBackgroundColor)))
-            
             FolderButton(isSelected: selectedOutputFolder != nil, label: selectedOutputFolder?.path ?? "Output Folder", action: outputBlock)
                 .frame(width: 100)
-                .background(RoundedRectangle(cornerRadius: 10.0)
-                    .fill(Color(nsColor: .underPageBackgroundColor)))
-            
         }
     }
 }

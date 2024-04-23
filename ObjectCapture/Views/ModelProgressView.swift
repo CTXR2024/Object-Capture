@@ -13,11 +13,8 @@ struct ModelProgressView: View {
     var cancelAction: () -> Void
     
     enum PresentationState {
-        case hidden
-        case initializing
-        case bar
-        case copying
-        case finished }
+        case hidden,initializing,bar,copying,finished
+    }
     
     var body: some View {
         Group {

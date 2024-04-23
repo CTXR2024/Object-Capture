@@ -67,49 +67,48 @@ struct CustomAlertModifier: ViewModifier {
     func body(content: Content) -> some View {
         
         content.sheet(isPresented: $alertTools.isPresented) {
-            ZStack {
-                
-                ForEach(alertTools.list) {alertData in
-
-                    VStack {
-                        VStack(spacing: 20) {
-                            VStack(spacing: 10) {
-                                Text(alertData.title)
-                                Text(alertData.message ?? "")
-                            }
-                            
-                            
-                            if alertData.primaryTitle != nil || alertData.secondaryTitle != nil {
-                                Spacer(minLength: 50)
-                                if let title = alertData.primaryTitle {
-                                    Button(action: {
-                                        alertData.onPrimary?()
-                                        alertTools.dismiss(alertData)
-                                    }, label: {
-                                        HStack {
-                                            Text(title)
-                                        }.frame(height: 25).frame(maxWidth: .infinity)
-                                    })
+            VStack {
+                ZStack {
+                    ForEach(alertTools.list) {alertData in
+                        VStack {
+                            VStack(spacing: 20) {
+                                VStack(spacing: 10) {
+                                    Text(alertData.title)
+                                    Text(alertData.message ?? "")
                                 }
                                 
-                                if let title = alertData.secondaryTitle{
-                                    Button(action: {
-                                        alertData.onSecondary?()
-                                        alertTools.dismiss(alertData)
-                                    }, label: {
-                                        HStack {
-                                            Text(title)
-                                        }.frame(height: 25).frame(maxWidth: .infinity)
-                                    })
+                                if alertData.primaryTitle != nil || alertData.secondaryTitle != nil {
+                                    Spacer(minLength: 50)
+                                    if let title = alertData.primaryTitle {
+                                        Button(action: {
+                                            alertData.onPrimary?()
+                                            alertTools.dismiss(alertData)
+                                        }, label: {
+                                            HStack {
+                                                Text(title)
+                                            }.frame(height: 25).frame(maxWidth: .infinity)
+                                        })
+                                    }
+                                    
+                                    if let title = alertData.secondaryTitle{
+                                        Button(action: {
+                                            alertData.onSecondary?()
+                                            alertTools.dismiss(alertData)
+                                        }, label: {
+                                            HStack {
+                                                Text(title)
+                                            }.frame(height: 25).frame(maxWidth: .infinity)
+                                        })
+                                    }
                                 }
-                            }
-                            
-                        }.padding(.vertical, 40).padding(.horizontal, 20)
-                            .frame(width: 280)
-                            .background(Color.black).border(Color.white.opacity(0.1), width: 2)
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.black)
-                    
-                }
+                                
+                            }.padding(.vertical, 40).padding(.horizontal, 20)
+                                .frame(width: 280, height: 320)
+                                .background(Color.black).border(Color.white.opacity(0.1), width: 2)
+                        }
+                        
+                    }
+                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.black.opacity(0.4))
             }
             
         }

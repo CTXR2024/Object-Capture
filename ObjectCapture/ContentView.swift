@@ -17,9 +17,9 @@ struct ContentView: View {
             HStack(spacing: 0) {
                 Sidebar()
                 QuickLookPreview()
-            }.frame(width: geo.size.width, height: geo.size.height).customAlert()
+            }.frame(width: geo.size.width, height: geo.size.height)
                
-        }
+        }.customAlert()
     }
 }
 

@@ -13,31 +13,27 @@ struct FolderButton: View {
     var label: String
     var action: () -> Void
     
-    init(isSelected: Bool, label: String, action: @escaping () -> Void) {
-        self.isSelected = isSelected
-        self.label = label
-        self.action = action
-    }
-    
     var body: some View {
-        Button(action: {
-            action()
-        }, label: {
+        Button(action: action) {
             VStack(spacing: 2) {
                 Image(systemName: isSelected ? "folder" : "square.and.arrow.down")
                     .imageScale(.large)
                     .foregroundColor(.blue)
-                Text(isSelected ? "Folder Selected" : label)
+                Text(label)
                     .font(.caption)
                     .lineLimit(1)
-                    .foregroundColor(isSelected ? .white : .gray)
+                    .foregroundColor(Color(nsColor: isSelected ? .selectedControlTextColor : .disabledControlTextColor))
             }
-        })
-        .padding(10)
-        .buttonStyle(PlainButtonStyle())
+            .frame(maxWidth: .infinity)
+            .padding(10)
+            .background(RoundedRectangle(cornerRadius: 10.0)
+                .fill(Color(nsColor: .underPageBackgroundColor)))
+        }
+        .buttonStyle(.plain)
+        
     }
 }
 
 #Preview {
-    FolderButton(isSelected: false, label: "ImageFolder", action: {})
+    FolderButton(isSelected: false, label: "Image Folder", action: {})
 }

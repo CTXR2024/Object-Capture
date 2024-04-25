@@ -26,4 +26,4 @@ In the first phase of the workshop, we expected to get a basic understanding of 
 ## Challenges and Solutions
 The team was not experienced enough in SwiftUI development, so we encountered a variety of problems during the development process, I hereby record some of the problems we encountered during the development as well as my thoughts, so that developers can have a quick reference to solve the same problems we encountered!
 
-Our team also encountered some problems during the development of this desktop application, as well as confusion and thoughts about the use of SwiftUI, please refer to [Issues](https://github.com/JayJiangCT/ObjectCapture/edit/TIW-79-1/DevelopmentNotes.md).
+Our team also encountered some problems during the development of this desktop application, as well as confusion and thoughts about the use of SwiftUI, please refer to [Issues](DevelopmentNotes.md).

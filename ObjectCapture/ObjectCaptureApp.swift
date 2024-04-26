@@ -12,9 +12,11 @@ struct ObjectCaptureApp: App {
     
     @State private var showSheet = false
     
+    @StateObject private var sharedData = SharedData()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environmentObject(sharedData)
         }
     }
 }

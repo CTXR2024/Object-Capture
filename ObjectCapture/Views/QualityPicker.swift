@@ -9,19 +9,19 @@ import SwiftUI
 
 struct QualityPicker: View {
     
-    @State var selectedQuality: Quality = .raw
+    @Binding var selectedQuality: Quality    //@State var temp: Quality = .full
     
     var body: some View {
-        Picker(selection: $selectedQuality, label: Text("")) {
+        Picker(selection: $selectedQuality ,label: Text("")) {
             ForEach(Quality.allCases) { quality in
-                Text(quality.rawValue)
-                    .padding(5)
+                Text(quality.rawValue).tag(quality)
             }
-        }
-        .pickerStyle(.radioGroup)
+        }.pickerStyle(.radioGroup).padding(5)
     }
 }
 
 #Preview {
-    QualityPicker()
+    QualityPicker(selectedQuality: .constant(.raw))
 }
+
+

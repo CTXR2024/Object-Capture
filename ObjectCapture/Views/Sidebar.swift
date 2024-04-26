@@ -52,7 +52,7 @@ private extension Sidebar {
                     AlertTools.show("222222", message: "2222222")
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                        AlertTools.show("3333", message: "33333", primaryTitle: "Primary", secondaryTitle: "Secondary", onPrimary: {}, onSecondary: {})
+                        AlertTools.show("3333", message: "33333", primaryTitle: "sure", secondaryTitle: "cancel", onPrimary: {}, onSecondary: {})
                     })
                     
                 })

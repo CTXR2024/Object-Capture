@@ -9,52 +9,68 @@ import SwiftUI
 import RealityKit
 
 struct ContentView: View {
+    
     @EnvironmentObject private var sharedData: SharedData
     @State private var photogrammetrySession: PhotogrammetrySession?
     @State private var showingCancelAlert = false
     @State private var shouldResetCamera = false
+    @State private var splitViewController: NSSplitViewController?
+    
     var body: some View {
-        GeometryReader { geo in
-            HStack(spacing: 0) {
-                Sidebar(photogrammetrySession: $photogrammetrySession)
-                Spacer()
-                ZStack{
-                    Group{
-                        if let modelURL = sharedData.modelViewerModelURL{
-                            ModelViewer(modelURL: modelURL,shouldResetCamera: $shouldResetCamera).frame(maxWidth:.infinity, maxHeight: .infinity)
-                        } else {
-                            Label("Preview or export a model to see it here!", systemImage: "arkit").font(.title2).padding(150)
-                        }
-                        
-                    }.frame(maxHeight: .infinity)
-                    ModelProgressView(cancelAction: {
-                        showingCancelAlert.toggle()
-                    })
-                    .padding()
-                }
-                
-                
-            }.frame(width: geo.size.width, height: geo.size.height)
-        }.onDisappear {
+        
+        NavigationSplitView {
+            Sidebar(photogrammetrySession: $photogrammetrySession)
+                .frame(minWidth: 220, maxWidth: .infinity, maxHeight: .infinity)
+                .background(
+                    VisualEffectView(material: .windowBackground, blendingMode: .behindWindow)
+                        .edgesIgnoringSafeArea(.all)
+                )
+        } detail: {
+            ZStack(alignment: .bottom){
+                VisualEffectView(material: .sidebar, blendingMode: .behindWindow)
+                Group(){
+                    if let modelURL = sharedData.modelViewerModelURL{
+                        ModelViewer(modelURL: modelURL,shouldResetCamera: $shouldResetCamera).frame(maxWidth:.infinity, maxHeight: .infinity)
+                    } else {
+                        Label("Preview or export a model to see it here!", systemImage: "arkit")
+                            .font(.title2)
+                            .padding(150)
+                            .frame(maxWidth:.infinity, maxHeight: .infinity)
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                }.frame(maxHeight: .infinity)
+                ModelProgressView(cancelAction: {
+                    showingCancelAlert.toggle()
+                })
+                .padding()
+            }
+        }
+        .onDisappear {
             photogrammetrySession?.cancel()
             if let modelViewerModelURL = sharedData.modelViewerModelURL {
                 try? ModelFileManager().removeTempModel(modelURL: modelViewerModelURL)
                 print("remove temp model \(modelViewerModelURL)")
             }
-        }.onExitCommand {
+        }
+        .onExitCommand {
             if photogrammetrySession?.isProcessing ?? false {
                 showingCancelAlert.toggle()
             }
-        }.alert(isPresented: $showingCancelAlert) {
+        }
+        .alert(isPresented: $showingCancelAlert) {
             Alert(
                 title:
-                    Text("StopCreatingModelAlertTitle"),
+                    Text("Terminate Now"),
                 message:
-                    Text("StopCreatingModelAlertBody"),
+                    Text("Are you sure you want to terminate the current model generation progress?"),
                 primaryButton:
-                        .cancel(),
+                        .default(
+                            Text("Terminate"),
+                            action: { photogrammetrySession?.cancel() }
+                        ),
                 secondaryButton:
-                        .destructive(Text("Stop"), action: { photogrammetrySession?.cancel() })
+                        .cancel()
             )
         }
     }

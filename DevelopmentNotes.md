@@ -42,6 +42,6 @@ func toggleSidebar() {
 <body>
   <p>NavigationView is deprecated! Details refer to <a href=https://developer.apple.com/documentation/swiftui/navigationview>this</a></p>
   <p>So I replaced Navigation with <a href="https://developer.apple.com/documentation/swiftui/navigationsplitview">NavigationSpiltView</a>In addition, NavigationSpiltView comes with a toggle to collapse and expand the left sidebar.</p>
-  <p>Please check the <a href=ObjectCapture/Views/Sidebar.swift>Sidebar.swif</a></p>
+  <p>Please check the <a href=ObjectCapture/Views/Sidebar.swift>Sidebar.swift</a></p>
 </body>
 

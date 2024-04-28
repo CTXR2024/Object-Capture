@@ -28,7 +28,6 @@
 		E2B02AFF2BC926BA005A4C37 /* AlertTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B02AFE2BC926BA005A4C37 /* AlertTools.swift */; };
 		F70A77E12BB6950E0003C243 /* QuickLookPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */; };
 		F70A77E42BB6984B0003C243 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F70A77E32BB6984B0003C243 /* Quartz.framework */; };
-		F70A77E62BB699950003C243 /* PegasusTrail.usdz in Resources */ = {isa = PBXBuildFile; fileRef = F70A77E52BB699950003C243 /* PegasusTrail.usdz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,7 +73,6 @@
 		E2B02AFE2BC926BA005A4C37 /* AlertTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTools.swift; sourceTree = "<group>"; };
 		F70A77E02BB6950E0003C243 /* QuickLookPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickLookPreview.swift; sourceTree = "<group>"; };
 		F70A77E32BB6984B0003C243 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
-		F70A77E52BB699950003C243 /* PegasusTrail.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = PegasusTrail.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +113,6 @@
 		D74ED1E82BAD622B0081F7DA = {
 			isa = PBXGroup;
 			children = (
-				F70A77E52BB699950003C243 /* PegasusTrail.usdz */,
 				D74ED1F32BAD622B0081F7DA /* ObjectCapture */,
 				D74ED2052BAD622D0081F7DA /* ObjectCaptureTests */,
 				D74ED20F2BAD622D0081F7DA /* ObjectCaptureUITests */,
@@ -328,7 +325,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D74ED1FC2BAD622C0081F7DA /* Preview Assets.xcassets in Resources */,
-				F70A77E62BB699950003C243 /* PegasusTrail.usdz in Resources */,
 				D74ED1F92BAD622C0081F7DA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -46,11 +46,19 @@ struct ContentView: View {
         }
         .onAppear{
             if !PhotogrammetrySession.isSupported {
-                AlertTools.show("Sorry About That", message: "Sorry your current macOS does not support Object Capture.", primaryTitle: "Exit", secondaryTitle: "View Details", onSecondary:  {
-                    let urlStr = "https://developer.apple.com/documentation/RealityKit/creating-3d-objects-from-photographs#Check-for-availability"
-                    let url = URL(string: urlStr)!
-                    NSWorkspace.shared.open(url)
-                })
+                AlertTools.show(
+                    "Feature Unavailable",
+                    message: "Object Capture is not supported on your current macOS version. For optimal experience, please consider updating your system or visit the following link for more details.",
+                    primaryTitle: "Exit",
+                    secondaryTitle: "Learn More",
+                    onSecondary:  {
+                        if let url = URL(string: "https://developer.apple.com/documentation/RealityKit/creating-3d-objects-from-photographs#Check-for-availability") {
+                            NSWorkspace.shared.open(url)
+                        } else {
+                            print("Failed to create URL for details")
+                        }
+                    }
+                )
             }
         }
         .customAlert()

@@ -16,7 +16,10 @@ struct ObjectCaptureApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView().environmentObject(sharedData)
+            ContentView()
+                .frame(minWidth: 1280, maxWidth: .infinity, minHeight: 720, maxHeight: .infinity)
+                .environmentObject(sharedData)
         }
+        .windowStyle(HiddenTitleBarWindowStyle())
     }
 }

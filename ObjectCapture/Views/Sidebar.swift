@@ -14,9 +14,7 @@ struct Sidebar: View {
     
     typealias Detail = PhotogrammetrySession.Request.Detail
     
-    private static let defualtWidth: CGFloat = 220.0
     @State private var processingErrorOccurred = false
-    @State private var width: CGFloat = defualtWidth //  defautl width is 220pt
     @State private var selectedImageFolder : URL?
     @State private var selectedOutputFolder : URL?
     @State private var selectedQuality: Quality = .reduced
@@ -30,8 +28,7 @@ struct Sidebar: View {
             Spacer()
             finalProcessingQualitySection
         }
-        .frame(width: self.width)
-        .padding(.vertical, 20)
+        .padding(.bottom, 20)
         .padding(.horizontal, 10)
         .background(Color(hex: "#4B4B4B"))
     }

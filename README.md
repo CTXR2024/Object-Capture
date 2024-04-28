@@ -42,3 +42,14 @@ After watching the official introduction [video](https://developer.apple.com/vid
 The team was not experienced enough in SwiftUI development, so we encountered a variety of problems during the development process, I hereby record some of the problems we encountered during the development as well as my thoughts so that developers can have a quick reference to solve the same problems we encountered!
 
 Our team also encountered some problems during the development of this desktop application, as well as confusion and thoughts about the use of SwiftUI, please refer to [Dev Notes](DevelopmentNotes.md).
+
+## Contributors
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+- [peytonwu](https://github.com/peytonwupeixin) 💻
+- [Even Lan](https://github.com/evenlan1990) 💻
+- [Kerwin-GH](https://github.com/Kerwin-GH) 💻
+- [Jay Jiang](https://github.com/JayJiangCT) 💻
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+### Supported by:
+[ChanceTop](https://chancetop.com/)

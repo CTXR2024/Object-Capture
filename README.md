@@ -1,4 +1,4 @@
-# MacOS App development study notes
+# Object Capture
 
 ## Table of Contents
 - [Project Overview](#project-overview)
@@ -9,7 +9,7 @@
 - [Learning Reflections](#learning-reflections)
 
 ## Project Overview
-In the first phase of the workshop, we expected to get a basic understanding of Apple's AR ecosystem, so we chose this entry point. After watching the official introduction [video](https://developer.apple.com/videos/play/wwdc2021/10076) of WWDC 2021, we decided to develop a desktop application. It utilizes Object Capture to generate 3D models, thus providing us with the ability to model.
+After watching the official introduction [video](https://developer.apple.com/videos/play/wwdc2021/10076) of WWDC 2021, we decided to develop a desktop application. It utilizes Object Capture to generate 3D models, thus allowing us to model. That desktop app shown in the video we didn't find in the App Store or Apple's official website (Apple only provides a command line tool). Eventually, our team decided to implement it. This was even though most of us had no prior experience with MacOS App development. We enjoyed the learning and thinking process and it will be our first step to explore VR,AR development!
 
 ## Learning Objectives
 - Learn to write macOS applications using Swift

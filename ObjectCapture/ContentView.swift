@@ -11,7 +11,7 @@ import RealityKit
 struct ContentView: View {
     @EnvironmentObject private var sharedData: SharedData
     @State private var photogrammetrySession: PhotogrammetrySession?
-    @State private var showingCancelAlert = false
+//    @State private var showingCancelAlert = false
     @State private var shouldResetCamera = false
     var body: some View {
         GeometryReader { geo in
@@ -28,7 +28,7 @@ struct ContentView: View {
                         
                     }.frame(maxHeight: .infinity)
                     ModelProgressView(cancelAction: {
-                        showingCancelAlert.toggle()
+                        showingCancel()
                     })
                     .padding()
                 }
@@ -43,21 +43,25 @@ struct ContentView: View {
             }
         }.onExitCommand {
             if photogrammetrySession?.isProcessing ?? false {
-                showingCancelAlert.toggle()
+                showingCancel()
             }
-        }.alert(isPresented: $showingCancelAlert) {
-            Alert(
-                title:
-                    Text("StopCreatingModelAlertTitle"),
-                message:
-                    Text("StopCreatingModelAlertBody"),
-                primaryButton:
-                        .cancel(),
-                secondaryButton:
-                        .destructive(Text("Stop"), action: { photogrammetrySession?.cancel() })
-            )
-        }
+        }.onAppear{
+            if !PhotogrammetrySession.isSupported {
+                AlertTools.show("Sorry About That", message: "Sorry your current macOS does not support Object Capture.", primaryTitle: "Exit", secondaryTitle: "View Details", onSecondary:  {
+                    let urlStr = "https://developer.apple.com/documentation/RealityKit/creating-3d-objects-from-photographs#Check-for-availability"
+                    let url = URL(string: urlStr)!
+                    NSWorkspace.shared.open(url)
+                })
+            }
+        }.customAlert()
     }
+    
+    func showingCancel() {
+        AlertTools.show("StopCreatingModelAlertTitle", message: "StopCreatingModelAlertBody", primaryTitle: "Cancel", secondaryTitle: "Stop", onSecondary: {
+            photogrammetrySession?.cancel()
+        })
+    }
+    
 }
 
 #Preview {

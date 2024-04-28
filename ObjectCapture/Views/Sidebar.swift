@@ -36,6 +36,27 @@ struct Sidebar: View {
         .background(Color(hex: "#4B4B4B"))
     }
     
+    func check() -> Bool {
+        if self.selectedImageFolder == nil {
+            AlertTools.show("No Image Folder Selected", message: "Previewing and Creating a model requires selecting the folder where the image material is located", primaryTitle: "Foward Select", secondaryTitle: "Close", onPrimary: {
+                processingErrorOccurred = true
+                selectSourceFolder()
+            })
+            return false
+        }
+        
+        if selectedOutputFolder == nil {
+            AlertTools.show("No Output Folder Selected", message: "Please specify the final output folder of the model", primaryTitle: "Foward Select", secondaryTitle: "Close", onPrimary: {
+                processingErrorOccurred = true
+                selectSourceFolder()
+            })
+            return false
+        }
+        processingErrorOccurred = false
+        return true
+       
+    }
+    
 }
 
 private extension Sidebar {
@@ -62,10 +83,8 @@ private extension Sidebar {
             Text("Final Processing Quality")
             QualityPicker(selectedQuality: $selectedQuality)
             Button(action: {
-                if let destinationURL = selectedOutputFolder {
-                    createModel(selectedQuality.detail, permanentURL: destinationURL)
-                } else{
-                    selectSaveModelFile()
+                if check() {
+                    checkNotificationAndStartSession(inputURL: selectedImageFolder!, detail: selectedQuality.detail, permanentURL: selectedOutputFolder!)
                 }
             }) {
                 Text("Create Model")
@@ -123,8 +142,10 @@ private extension Sidebar {
         processingErrorOccurred = false
         // check inout =folder
         guard let inputURL = selectedImageFolder else {
-            processingErrorOccurred = true
-            selectSourceFolder()
+            AlertTools.show("No Image Folder Selected", message: "Previewing and Creating a model requires selecting the folder where the image material is located", primaryTitle: "Foward Select", secondaryTitle: "Close", onPrimary: {
+                processingErrorOccurred = true
+                selectSourceFolder()
+            })
             return
         }
         //check notification permission and start session
@@ -163,6 +184,7 @@ private extension Sidebar {
         } catch {
             print("Could not create photogrammetry session, aborting...")
             processingErrorOccurred = true
+            AlertTools.show("System Error", message: " \(error.localizedDescription)")
         }
     }
     
@@ -225,6 +247,7 @@ private extension Sidebar {
                 }
             } catch {
                 processingErrorOccurred = true
+                AlertTools.show("System Error", message: " \(error.localizedDescription)")
             }
         }
         do {
@@ -237,6 +260,7 @@ private extension Sidebar {
             withAnimation {
                 sharedData.modelProgressViewState = .hidden
             }
+            AlertTools.show("System Error", message: " \(error.localizedDescription)")
         }
     }
     

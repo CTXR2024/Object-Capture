@@ -8,7 +8,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import RealityKit
-import UserNotifications
 
 struct Sidebar: View {
     
@@ -33,27 +32,12 @@ struct Sidebar: View {
         .background(Color(hex: "#4B4B4B"))
     }
     
-    func check() -> Bool {
-        if self.selectedImageFolder == nil {
-            AlertTools.show("No Image Folder Selected", message: "Previewing and Creating a model requires selecting the folder where the image material is located", primaryTitle: "Foward Select", secondaryTitle: "Close", onPrimary: {
-                processingErrorOccurred = true
-                selectSourceFolder()
-            })
-            return false
-        }
-        
-        if selectedOutputFolder == nil {
-            AlertTools.show("No Output Folder Selected", message: "Please specify the final output folder of the model", primaryTitle: "Foward Select", secondaryTitle: "Close", onPrimary: {
-                processingErrorOccurred = true
-                selectSourceFolder()
-            })
-            return false
-        }
-        processingErrorOccurred = false
-        return true
-       
+    private func showAlert(title: String, message: String, primaryAction: @escaping ()->Void) {
+        AlertTools.show(title, message: message, primaryTitle: "Select Folder", secondaryTitle: "Close", onPrimary: {
+            processingErrorOccurred = true
+            primaryAction()
+        })
     }
-    
 }
 
 private extension Sidebar {
@@ -80,9 +64,7 @@ private extension Sidebar {
             Text("Final Processing Quality")
             QualityPicker(selectedQuality: $selectedQuality)
             Button(action: {
-                if check() {
-                    checkNotificationAndStartSession(inputURL: selectedImageFolder!, detail: selectedQuality.detail, permanentURL: selectedOutputFolder!)
-                }
+                createModel()
             }) {
                 Text("Create Model")
                     .font(.caption2)
@@ -129,52 +111,28 @@ extension Sidebar {
 }
 
 private extension Sidebar {
+    
     private func createPreview() {
-        createModel(Detail.preview)
-    }
-    
-    
-    private func createModel(_ detail: PhotogrammetrySession.Request.Detail, permanentURL: URL? = nil) {
-        
-        processingErrorOccurred = false
-        // check inout =folder
         guard let inputURL = selectedImageFolder else {
-            AlertTools.show("No Image Folder Selected", message: "Previewing and Creating a model requires selecting the folder where the image material is located", primaryTitle: "Foward Select", secondaryTitle: "Close", onPrimary: {
-                processingErrorOccurred = true
-                selectSourceFolder()
-            })
+            showAlert(title: "No Image Selected", message: "Previewing and Creating a model requires selecting the folder where the image material is located", primaryAction: selectSourceFolder)
             return
         }
-        //check notification permission and start session
-        checkNotificationAndStartSession(inputURL: inputURL, detail: detail, permanentURL: permanentURL)
+        startPhotogrammetrySession(detail: Detail.preview, inputURL: inputURL)
     }
     
-    private func checkNotificationAndStartSession(inputURL: URL, detail: Detail, permanentURL: URL? = nil) {
-        requestNotificationPermission { granted, error in
-            guard granted else {
-                DispatchQueue.main.async {
-                    handleNotificationPermissionDenied()
-                }
-                return
-            }
-            startPhotogrammetrySession(inputURL: inputURL, detail: detail, permanentURL: permanentURL)
+    private func createModel() {
+        guard let inputURL = selectedImageFolder else {
+            showAlert(title: "No Image Selected", message: "Previewing and Creating a model requires selecting the folder where the image material is located", primaryAction: selectSourceFolder)
+            return
         }
-    }
-    
-    private func handleNotificationPermissionDenied() {
-        let alter = NSAlert()
-        alter.messageText = "Local notification permission"
-        alter.informativeText = "Please select \(getApplicationName()) in the list to grant the permission."
-        alter.alertStyle = .informational
-        alter.addButton(withTitle: "OK")
-        alter.addButton(withTitle: "Cancel")
-        let response = alter.runModal()
-        if response == .alertFirstButtonReturn {
-            openSystemPreferences()
+        guard let outputURL = selectedOutputFolder else {
+            showAlert(title: "No Output Folder Selected", message: "Please specify the final output folder of the model", primaryAction: selectSaveModelFile)
+            return
         }
+        startPhotogrammetrySession(detail: selectedQuality.detail, inputURL: inputURL, permanentURL: outputURL)
     }
     
-    private func startPhotogrammetrySession(inputURL: URL, detail: Detail, permanentURL: URL? = nil) {
+    private func startPhotogrammetrySession(detail: Detail, inputURL: URL, permanentURL: URL? = nil) {
         do {
             photogrammetrySession = try PhotogrammetrySession(input: inputURL, configuration: psConfig)
             configureSessionOutputHanling(permanentURL: permanentURL, detail: detail)
@@ -202,9 +160,7 @@ private extension Sidebar {
                     switch output {
                     case .processingComplete:
                         // RealityKit has processed all requests.
-                        DispatchQueue.main.async {
-                            handleCreationCompletion(temporaryLocation: temporarySaveURL, permenantSaveURL: permanentURL)
-                        }
+                        handleCreationCompletion(temporaryLocation: temporarySaveURL, permenantSaveURL: permanentURL)
                     case .requestError(_, _):
                         // Request encountered an error.
                         processingErrorOccurred = true
@@ -260,13 +216,13 @@ private extension Sidebar {
             AlertTools.show("System Error", message: " \(error.localizedDescription)")
         }
     }
-    
+   
+    @MainActor
     private func handleCreationCompletion(temporaryLocation: URL, permenantSaveURL: URL? = nil) {
         if processingErrorOccurred {
             withAnimation {
                 sharedData.modelProgressViewState = .hidden
             }
-            sendCreationConclusionNotification(success: false, exportedModelFilename: permenantSaveURL?.lastPathComponent)
             return
         }
         
@@ -297,12 +253,6 @@ private extension Sidebar {
                 sharedData.modelProgressViewState = .hidden
             }
         }
-        sendCreationConclusionNotification(success: true, exportedModelFilename: permenantSaveURL?.lastPathComponent)
-    }
-    
-    private func requestNotificationPermission(completionHandler: @escaping (Bool, Error?) -> Void){
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert,.sound,.badge],completionHandler:completionHandler)
     }
     
     private func openSystemPreferences(){
@@ -310,6 +260,7 @@ private extension Sidebar {
             NSWorkspace.shared.open(url)
         }
     }
+    
     func getApplicationName() -> String {
         if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String {
             return appName
@@ -317,33 +268,6 @@ private extension Sidebar {
             return appName
         }
         return "App"
-    }
-    private func sendCreationConclusionNotification(success: Bool, exportedModelFilename: String?) {
-        
-        let content = UNMutableNotificationContent()
-        
-        if let filename = exportedModelFilename {
-            if success {
-                content.title = "ModelExportSuccessNotificationTitle"
-                content.subtitle = String(format:"ModelExportSuccessNotificationBody %@",filename)
-            } else {
-                content.title = "ModelExportFailureNotificationTitle"
-                content.subtitle = String(format:"ModelExportFailureNotificationBody %@",filename)
-            }
-            
-        } else if let inputFolderName = selectedImageFolder?.lastPathComponent {
-            if success {
-                content.title = "PreviewCreationSuccessNotificationTitle"
-                content.subtitle = String(
-                    format: "PreviewCreationSuccessNotificationBody %@",inputFolderName)
-            } else {
-                content.title = "PreviewCreationFailureNotificationTitle"
-                content.subtitle = String(format:"PreviewCreationFailureNotificationBody %@",inputFolderName)
-            }
-        }
-        
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
     }
 }
 

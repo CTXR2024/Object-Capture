@@ -24,6 +24,6 @@ After watching the official introduction [video](https://developer.apple.com/vid
 - **Dependency Management Tool**: Swift Package Manager
 
 ## Challenges and Solutions
-The team was not experienced enough in SwiftUI development, so we encountered a variety of problems during the development process, I hereby record some of the problems we encountered during the development as well as my thoughts, so that developers can have a quick reference to solve the same problems we encountered!
+The team was not experienced enough in SwiftUI development, so we encountered a variety of problems during the development process, I hereby record some of the problems we encountered during the development as well as my thoughts so that developers can have a quick reference to solve the same problems we encountered!
 
 Our team also encountered some problems during the development of this desktop application, as well as confusion and thoughts about the use of SwiftUI, please refer to [Dev Notes](DevelopmentNotes.md).
